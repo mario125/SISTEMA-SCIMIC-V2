@@ -13,7 +13,7 @@ Module Module1
 
     Public Sub conn()
         Try
-            Connection = New OdbcConnection("dsn=camal_PRU;uid=postgres;pwd=root;")
+            Connection = New OdbcConnection("dsn=scimicPRU;uid=postgres;pwd=Scimic?Developer?479;")
             If Connection.State = ConnectionState.Closed Then
                 Connection.Open()
             End If
@@ -323,7 +323,7 @@ Module Module1
                 objCPE.USUARIO_SOL_EMPRESA = SqlDR("usuario_sol")
                 objCPE.PASS_SOL_EMPRESA = SqlDR("pass_sol")
                 objCPE.CONTRA_FIRMA = SqlDR("contra_firma")
-                objCPE.TIPO_PROCESO = 3 '1=PRODUCCION, 2=HOMOLOGACION, 3=BETA 
+                objCPE.TIPO_PROCESO = 1 '1=PRODUCCION, 2=HOMOLOGACION, 3=BETA 
             End While
 
             cmd2.Connection = Connection
