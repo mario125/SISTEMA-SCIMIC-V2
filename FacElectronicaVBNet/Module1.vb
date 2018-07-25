@@ -410,8 +410,6 @@ Module Module1
                     Sql = "UPDATE cja_documento Set(cod_hash,cod_sunat, msg_sunat) = ('ERROR','" & dictionaryEnv.Item("cod_sunat") & "','" & mensaje & "') WHERE id=" & SqlDR2("id")
                     RunSQL(Sql)
 
-
-
                 End If
                 SqlDR3.Close()
             End While
@@ -423,7 +421,11 @@ Module Module1
 
             INICIO.detener_timer()
             MessageBox.Show("ERROR..", ex.Message)
+            MessageBox.Show("ERROR..", ex.Message)
+            MessageBox.Show("ERROR..", ex.Message)
 
+
+            ESTAMOS  AQUIO
 
         End Try
 
