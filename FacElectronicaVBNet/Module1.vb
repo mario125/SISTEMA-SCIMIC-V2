@@ -424,13 +424,8 @@ Module Module1
             MessageBox.Show("ERROR..", ex.Message)
             MessageBox.Show("ERROR..", ex.Message)
 
+            HOLA NUEVA RRAMA
 
-            ESTAMOS  AQUIO
-
-            AJAAJJA ESTA
-
-
-            ItemBoundsPortion NOSOTROS
 
         End Try
 
