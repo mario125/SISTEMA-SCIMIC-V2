@@ -109,7 +109,7 @@ Public Class FrmRepMaestro
                 DtrComprobante("MOTIVO_MODIFICA") = objCPE.DESCRIPCION_MOTIVO.ToString
             End If
             DtrComprobante("CODIGO_BARRA") = vAppGlobalesMetodos.ConversionImagen(objCPE.RUTA_CODIGO_BARRA) 'vAppGlobalesMetodos.ConversionImagen("D:\CPE\CODIGOBARRA\" & nom_codigo_barra & ".BMP")
-            DtrComprobante("LOGO") = vAppGlobalesMetodos.ConversionImagen("D:\\CAMAL\\CPE\\CODIGOBARRA\\logo.bmp") 'vAppGlobalesMetodos.ConversionImagen("D:\CPE\CODIGOBARRA\" & nom_codigo_barra & ".BMP")
+            DtrComprobante("LOGO") = vAppGlobalesMetodos.ConversionImagen("D:\\CPE-SUNAT\\PRODUCCION\\CODIGOBARRA\\logo.bmp") 'vAppGlobalesMetodos.ConversionImagen("D:\CPE\CODIGOBARRA\" & nom_codigo_barra & ".BMP")
             DtrComprobante("TELEFONO") = objCPE.TELEFONO_PRINCIPAL.ToString
             DtrComprobante("DIRECCION_EMPRESA") = objCPE.DIRECCION_EMPRESA.ToString
             DtrComprobante("EMP_RUC") = objCPE.NRO_DOCUMENTO_EMPRESA.ToString
@@ -174,24 +174,30 @@ Public Class FrmRepMaestro
                         ObjReporteComprobante.Export()
 
                     ElseIf i = 2 Then
-                        ObjReporteComprobante = New RPT_COMPROBANTE
-                        ObjReporteComprobante.SetDataSource(DtsComprobante)
-                        CrvMaestro.ReportSource = ObjReporteComprobante
-                        CrvMaestro.Zoom(75)
+                        If objCPE.ESTADO_DE_DOC.ToString = "DOCUMENTO ERRONEO, SIN VALOR..." Then
+                        Else
 
-                        Dim CrExportOptions As ExportOptions
-                        Dim CrDiskFileDestinationOptions As New _
-                    DiskFileDestinationOptions()
-                        Dim CrFormatTypeOptions As New PdfRtfWordFormatOptions()
-                        CrDiskFileDestinationOptions.DiskFileName = objCPE.RUTA_PDF_2_NUVE
-                        CrExportOptions = ObjReporteComprobante.ExportOptions
-                        With CrExportOptions
-                            .ExportDestinationType = ExportDestinationType.DiskFile
-                            .ExportFormatType = ExportFormatType.PortableDocFormat
-                            .DestinationOptions = CrDiskFileDestinationOptions
-                            .FormatOptions = CrFormatTypeOptions
-                        End With
-                        ObjReporteComprobante.Export()
+                            ObjReporteComprobante = New RPT_COMPROBANTE
+                            ObjReporteComprobante.SetDataSource(DtsComprobante)
+                            CrvMaestro.ReportSource = ObjReporteComprobante
+                            CrvMaestro.Zoom(75)
+
+                            Dim CrExportOptions As ExportOptions
+                            Dim CrDiskFileDestinationOptions As New _
+                        DiskFileDestinationOptions()
+                            Dim CrFormatTypeOptions As New PdfRtfWordFormatOptions()
+                            CrDiskFileDestinationOptions.DiskFileName = objCPE.RUTA_PDF_2_NUVE
+                            CrExportOptions = ObjReporteComprobante.ExportOptions
+                            With CrExportOptions
+                                .ExportDestinationType = ExportDestinationType.DiskFile
+                                .ExportFormatType = ExportFormatType.PortableDocFormat
+                                .DestinationOptions = CrDiskFileDestinationOptions
+                                .FormatOptions = CrFormatTypeOptions
+                            End With
+                            ObjReporteComprobante.Export()
+                        End If
+
+
                     End If
                 Next
 

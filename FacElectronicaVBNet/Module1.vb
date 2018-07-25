@@ -13,7 +13,7 @@ Module Module1
 
     Public Sub conn()
         Try
-            Connection = New OdbcConnection("dsn=camal_SUNAT;uid=postgres;pwd=Scimic?Developer?479;")
+            Connection = New OdbcConnection("dsn=camal_PRU;uid=postgres;pwd=root;")
             If Connection.State = ConnectionState.Closed Then
                 Connection.Open()
             End If
@@ -323,7 +323,7 @@ Module Module1
                 objCPE.USUARIO_SOL_EMPRESA = SqlDR("usuario_sol")
                 objCPE.PASS_SOL_EMPRESA = SqlDR("pass_sol")
                 objCPE.CONTRA_FIRMA = SqlDR("contra_firma")
-                objCPE.TIPO_PROCESO = 1 '1=PRODUCCION, 2=HOMOLOGACION, 3=BETA 
+                objCPE.TIPO_PROCESO = 3 '1=PRODUCCION, 2=HOMOLOGACION, 3=BETA 
             End While
 
             cmd2.Connection = Connection
@@ -331,89 +331,96 @@ Module Module1
             Sql = "SELECT cja_documento.id, fe_serie.serie, cja_documento.de_num, cja_documento.fecha, emp_empresa.ruc, emp_empresa.empresa, emp_empresa.direccion, emp_empresa.provincia, cja_documento.cod_hash, cja_documento.cod_sunat, cja_documento.msg_sunat, cja_documento.listo, cja_documento.monto_me, cja_documento.igv, cja_documento.prod_id, fe_tipo_doc.codigo AS tipo_comp, cja_moneda.abrev AS moneda, emp_tipo_doc.codigo AS tipo_doc FROM cja_documento LEFT OUTER JOIN fe_serie ON(cja_documento.de_serie = fe_serie.id) LEFT OUTER JOIN emp_empresa ON (cja_documento.empresa = emp_empresa.id) INNER JOIN fe_tipo_doc ON (fe_serie.tipo_doc = fe_tipo_doc.id) LEFT OUTER JOIN cja_moneda ON (cja_documento.moneda = cja_moneda.id) LEFT OUTER JOIN emp_tipo_doc ON (emp_empresa.tipo_doc = emp_tipo_doc.id) WHERE cja_documento.de_serie > 0 AND cja_documento.de_num > 0 and cja_documento.msg_sunat IS NULL OR cja_documento.msg_sunat = ''"
             cmd2.CommandText = Sql
             SqlDR2 = cmd2.ExecuteReader()
+
+
+
             While SqlDR2.Read()
 
-                objCPE.TIPO_OPERACION = ""
-                objCPE.TOTAL_GRAVADAS = SqlDR2("monto_me").ToString  'SUB TOTAL
-                objCPE.SUB_TOTAL = Math.Round(SqlDR2("monto_me").ToString - SqlDR2("igv").ToString, 2)  'SUB TOTAL
-                objCPE.TOTAL_IGV = SqlDR2("igv").ToString   'TOTAL IGV
-                objCPE.TOTAL_ISC = 0
-                objCPE.TOTAL_OTR_IMP = 0
-                objCPE.TOTAL = SqlDR2("monto_me").ToString  'TOTAL COMPROBANTE_____________________________________________________________________________MODIFICANDO  SUMAR CADA ITEM 
-                objCPE.TOTAL_LETRAS = Letras(SqlDR2("monto_me").ToString, SqlDR2("moneda").ToString)
-                objCPE.NRO_GUIA_REMISION = ""
-                objCPE.COD_GUIA_REMISION = ""
-                objCPE.NRO_OTR_COMPROBANTE = ""
-                objCPE.COD_OTR_COMPROBANTE = ""
-                objCPE.NRO_COMPROBANTE = SqlDR2("serie").ToString & "-" & SqlDR2("de_num").ToString
-                objCPE.FECHA_DOCUMENTO = Format(CDate(SqlDR2("fecha").ToString), "yyy-MM-dd") '"2018-01-18"
-                objCPE.COD_TIPO_DOCUMENTO = SqlDR2("tipo_comp").ToString '01=FACTURA, 03=BOLETA, 07=NOTA CREDITO, 08=NOTA DEBITO
-                objCPE.COD_MONEDA = SqlDR2("moneda").ToString
-                objCPE.PLACA_VEHICULO = "" 'txtplaca_vehiculo.Text
-                '========================DATOS DEL CIENTE==========================
-                objCPE.NRO_DOCUMENTO_CLIENTE = SqlDR2("ruc").ToString 'TXTNUMERODOCUMENTO.Text
-                objCPE.RAZON_SOCIAL_CLIENTE = SqlDR2("empresa").ToString 'TXTRAZON_SOCIAL.Text
-                objCPE.TIPO_DOCUMENTO_CLIENTE = SqlDR2("tipo_doc").ToString 'CBOTIPODOCUMENTO.SelectedValue   '1=DNI,6=RUC
-                objCPE.DIRECCION_CLIENTE = SqlDR2("direccion").ToString 'TXTDIRECCION.Text
-                If SqlDR2("provincia").ToString <> "" Then
-                    objCPE.CIUDAD_CLIENTE = SqlDR2("provincia").ToString '"LIMA"
-                Else
-                    objCPE.CIUDAD_CLIENTE = "LIMA"
-                End If
-                objCPE.COD_PAIS_CLIENTE = "PE"
-                ''=============================DATOS EMPRESA===========================
+                    objCPE.TIPO_OPERACION = ""
+                    objCPE.TOTAL_GRAVADAS = SqlDR2("monto_me").ToString  'SUB TOTAL
+                    objCPE.SUB_TOTAL = Math.Round(SqlDR2("monto_me").ToString - SqlDR2("igv").ToString, 2)  'SUB TOTAL
+                    objCPE.TOTAL_IGV = SqlDR2("igv").ToString   'TOTAL IGV
+                    objCPE.TOTAL_ISC = 0
+                    objCPE.TOTAL_OTR_IMP = 0
+                    objCPE.TOTAL = SqlDR2("monto_me").ToString  'TOTAL COMPROBANTE_____________________________________________________________________________MODIFICANDO  SUMAR CADA ITEM 
+                    objCPE.TOTAL_LETRAS = Letras(SqlDR2("monto_me").ToString, SqlDR2("moneda").ToString)
+                    objCPE.NRO_GUIA_REMISION = ""
+                    objCPE.COD_GUIA_REMISION = ""
+                    objCPE.NRO_OTR_COMPROBANTE = ""
+                    objCPE.COD_OTR_COMPROBANTE = ""
+                    objCPE.NRO_COMPROBANTE = SqlDR2("serie").ToString & "-" & SqlDR2("de_num").ToString
+                    objCPE.FECHA_DOCUMENTO = Format(CDate(SqlDR2("fecha").ToString), "yyy-MM-dd") '"2018-01-18"
+                    objCPE.COD_TIPO_DOCUMENTO = SqlDR2("tipo_comp").ToString '01=FACTURA, 03=BOLETA, 07=NOTA CREDITO, 08=NOTA DEBITO
+                    objCPE.COD_MONEDA = SqlDR2("moneda").ToString
+                    objCPE.PLACA_VEHICULO = "" 'txtplaca_vehiculo.Text
+                    '========================DATOS DEL CIENTE==========================
+                    objCPE.NRO_DOCUMENTO_CLIENTE = SqlDR2("ruc").ToString 'TXTNUMERODOCUMENTO.Text
+                    objCPE.RAZON_SOCIAL_CLIENTE = SqlDR2("empresa").ToString 'TXTRAZON_SOCIAL.Text
+                    objCPE.TIPO_DOCUMENTO_CLIENTE = SqlDR2("tipo_doc").ToString 'CBOTIPODOCUMENTO.SelectedValue   '1=DNI,6=RUC
+                    objCPE.DIRECCION_CLIENTE = SqlDR2("direccion").ToString 'TXTDIRECCION.Text
+                    If SqlDR2("provincia").ToString <> "" Then
+                        objCPE.CIUDAD_CLIENTE = SqlDR2("provincia").ToString '"LIMA"
+                    Else
+                        objCPE.CIUDAD_CLIENTE = "LIMA"
+                    End If
+                    objCPE.COD_PAIS_CLIENTE = "PE"
+                    ''=============================DATOS EMPRESA===========================
 
-                Dim OBJCPE_DETALLE_LIST As New List(Of BusinessEntities.CPE_DETALLE)
-                cmd3.Connection = Connection
-                cmd3.CommandType = CommandType.Text
+                    Dim OBJCPE_DETALLE_LIST As New List(Of BusinessEntities.CPE_DETALLE)
+                    cmd3.Connection = Connection
+                    cmd3.CommandType = CommandType.Text
 
-                Sql = "SELECT stk_traslado_itm.cantidad, stk_traslado_itm.precio, stk_traslado_itm.total, stk_unidad.codigo as unidad, stk_producto.codigo, stk_producto.producto FROM stk_traslado_itm LEFT OUTER JOIN stk_unidad ON (stk_traslado_itm.medida = stk_unidad.id) LEFT OUTER JOIN stk_producto ON (stk_traslado_itm.producto = stk_producto.id) WHERE stk_traslado_itm.cantidad>0 and stk_traslado_itm.traslado =" & SqlDR2("prod_id").ToString
-                cmd3.CommandText = Sql
-                SqlDR3 = cmd3.ExecuteReader()
-                Z = 1
-                While SqlDR3.Read()
-                    objCPE_DETALLE = New BusinessEntities.CPE_DETALLE
-                    objCPE_DETALLE.ITEM = Z
-                    objCPE_DETALLE.UNIDAD_MEDIDA = SqlDR3("unidad").ToString ' vObjTempComprobante.Rows(Z)("UND.MED").ToString 'UNIDAD MEDIDA SEGUN CATALOGO 8
-                    objCPE_DETALLE.CANTIDAD = SqlDR3("cantidad").ToString 'CDec(vObjTempComprobante.Rows(Z)("CANTIDAD"))
-                    objCPE_DETALLE.PRECIO = SqlDR3("precio").ToString 'CDec(vObjTempComprobante.Rows(Z)("PRECIO"))
-                    objCPE_DETALLE.IMPORTE = Format(SqlDR3("cantidad").ToString * SqlDR3("precio").ToString, "#0.00") 'SqlDR3("total").ToString 'CDec(vObjTempComprobante.Rows(Z)("IMPORTE"))
-                    objCPE_DETALLE.PRECIO_TIPO_CODIGO = "01"
-                    objCPE_DETALLE.IGV = Format(objCPE_DETALLE.IMPORTE - (objCPE_DETALLE.IMPORTE * 0.18), "#0.00") 'CDec(vObjTempComprobante.Rows(Z)("IGV"))
-                    objCPE_DETALLE.ISC = 0
-                    objCPE_DETALLE.COD_TIPO_OPERACION = "10"
-                    objCPE_DETALLE.CODIGO = SqlDR3("codigo").ToString 'vObjTempComprobante.Rows(Z)("CODIGO").ToString
-                    objCPE_DETALLE.DESCRIPCION = SqlDR3("producto").ToString 'vObjTempComprobante.Rows(Z)("DESCRIPCION").ToString
-                    objCPE_DETALLE.SUB_TOTAL = Format(objCPE_DETALLE.IMPORTE / 1.18, "#0.00") 'CDec(vObjTempComprobante.Rows(Z)("SUB.TOTAL"))
-                    objCPE_DETALLE.PRECIO_SIN_IMPUESTO = Format(SqlDR3("precio").ToString / 1.18, "#0.00") 'CDec(vObjTempComprobante.Rows(Z)("PRECIO"))
-                    OBJCPE_DETALLE_LIST.Add(objCPE_DETALLE)
-                    Z = Z + 1
+                    Sql = "SELECT stk_traslado_itm.cantidad, stk_traslado_itm.precio, stk_traslado_itm.total, stk_unidad.codigo as unidad, stk_producto.codigo, stk_producto.producto FROM stk_traslado_itm LEFT OUTER JOIN stk_unidad ON (stk_traslado_itm.medida = stk_unidad.id) LEFT OUTER JOIN stk_producto ON (stk_traslado_itm.producto = stk_producto.id) WHERE stk_traslado_itm.cantidad>0 and stk_traslado_itm.traslado =" & SqlDR2("prod_id").ToString
+                    cmd3.CommandText = Sql
+                    SqlDR3 = cmd3.ExecuteReader()
+                    Z = 1
+                    While SqlDR3.Read()
+                        objCPE_DETALLE = New BusinessEntities.CPE_DETALLE
+                        objCPE_DETALLE.ITEM = Z
+                        objCPE_DETALLE.UNIDAD_MEDIDA = SqlDR3("unidad").ToString ' vObjTempComprobante.Rows(Z)("UND.MED").ToString 'UNIDAD MEDIDA SEGUN CATALOGO 8
+                        objCPE_DETALLE.CANTIDAD = SqlDR3("cantidad").ToString 'CDec(vObjTempComprobante.Rows(Z)("CANTIDAD"))
+                        objCPE_DETALLE.PRECIO = SqlDR3("precio").ToString 'CDec(vObjTempComprobante.Rows(Z)("PRECIO"))
+                        objCPE_DETALLE.IMPORTE = Format(SqlDR3("cantidad").ToString * SqlDR3("precio").ToString, "#0.00") 'SqlDR3("total").ToString 'CDec(vObjTempComprobante.Rows(Z)("IMPORTE"))
+                        objCPE_DETALLE.PRECIO_TIPO_CODIGO = "01"
+                        objCPE_DETALLE.IGV = Format(objCPE_DETALLE.IMPORTE - (objCPE_DETALLE.IMPORTE * 0.18), "#0.00") 'CDec(vObjTempComprobante.Rows(Z)("IGV"))
+                        objCPE_DETALLE.ISC = 0
+                        objCPE_DETALLE.COD_TIPO_OPERACION = "10"
+                        objCPE_DETALLE.CODIGO = SqlDR3("codigo").ToString 'vObjTempComprobante.Rows(Z)("CODIGO").ToString
+                        objCPE_DETALLE.DESCRIPCION = SqlDR3("producto").ToString 'vObjTempComprobante.Rows(Z)("DESCRIPCION").ToString
+                        objCPE_DETALLE.SUB_TOTAL = Format(objCPE_DETALLE.IMPORTE / 1.18, "#0.00") 'CDec(vObjTempComprobante.Rows(Z)("SUB.TOTAL"))
+                        objCPE_DETALLE.PRECIO_SIN_IMPUESTO = Format(SqlDR3("precio").ToString / 1.18, "#0.00") 'CDec(vObjTempComprobante.Rows(Z)("PRECIO"))
+                        OBJCPE_DETALLE_LIST.Add(objCPE_DETALLE)
+                        Z = Z + 1
+                    End While
+
+                    objCPE.detalle = OBJCPE_DETALLE_LIST
+                    '======================================RESPUESTA====================================
+                    Dim dictionaryEnv As New Dictionary(Of String, String)
+                    dictionaryEnv = obj.envio(objCPE)
+
+
+
+
+
+                    If dictionaryEnv.Item("cod_sunat") = "0" Then
+                        Dim mesajito_sunat = "COD:" & dictionaryEnv.Item("cod_sunat") & "-MENSAJE:" & dictionaryEnv.Item("msj_sunat")
+                        Sql = "UPDATE cja_documento SET(cod_hash,cod_sunat,msg_sunat) = ('" & dictionaryEnv.Item("hash_cdr") & "','" & dictionaryEnv.Item("hash_cpe") & "','" & mesajito_sunat & "') WHERE id=" & SqlDR2("id")
+                        RunSQL(Sql)
+                        INICIO.notifi(100, SqlDR2("id"), dictionaryEnv.Item("msj_sunat"), ToolTipIcon.Info, Color.White, Color.White, Color.Tomato)
+                    Else
+                        Dim mensaje = dictionaryEnv.Item("msj_sunat").Replace("'", " ").Replace(":", " ").Replace("""", " ").Replace("http //xxx.xxx.xxx/ol-ti-itcpfegem-beta/billService", "PUEDE QUE SU DOCUMENTO NO TENGA ITEMS").Replace("{urn oasis names specification ubl schema xsd Invoice-2}", "").Replace("(in namespace urn oasis names specification ubl schema xsd Invoice-2), but next item should be {urn oasis names specification ubl schema xsd CommonAggregateComponents-2}InvoiceLine", "")
+                        INICIO.notifi(100, dictionaryEnv.Item("cod_sunat"), mensaje, ToolTipIcon.Error, Color.White, Color.White, Color.Tomato)
+                        Sql = "UPDATE cja_documento Set(cod_hash,cod_sunat, msg_sunat) = ('ERROR','" & dictionaryEnv.Item("cod_sunat") & "','" & mensaje & "') WHERE id=" & SqlDR2("id")
+                        RunSQL(Sql)
+
+                    End If
+                    SqlDR3.Close()
                 End While
 
-                objCPE.detalle = OBJCPE_DETALLE_LIST
-                '======================================RESPUESTA====================================
-                Dim dictionaryEnv As New Dictionary(Of String, String)
-                dictionaryEnv = obj.envio(objCPE)
 
 
 
-
-
-                If dictionaryEnv.Item("cod_sunat") = "0" Then
-                    Dim mesajito_sunat = "COD:" & dictionaryEnv.Item("cod_sunat") & "-MENSAJE:" & dictionaryEnv.Item("msj_sunat")
-                    Sql = "UPDATE cja_documento SET(cod_hash,cod_sunat,msg_sunat) = ('" & dictionaryEnv.Item("hash_cdr") & "','" & dictionaryEnv.Item("hash_cpe") & "','" & mesajito_sunat & "') WHERE id=" & SqlDR2("id")
-                    RunSQL(Sql)
-                    INICIO.notifi(100, SqlDR2("id"), dictionaryEnv.Item("msj_sunat"), ToolTipIcon.Info, Color.White, Color.White, Color.Tomato)
-                Else
-                    Dim mensaje = dictionaryEnv.Item("msj_sunat").Replace("'", " ").Replace(":", " ").Replace("""", " ").Replace("http //xxx.xxx.xxx/ol-ti-itcpfegem-beta/billService", "PUEDE QUE SU DOCUMENTO NO TENGA ITEMS").Replace("{urn oasis names specification ubl schema xsd Invoice-2}", "").Replace("(in namespace urn oasis names specification ubl schema xsd Invoice-2), but next item should be {urn oasis names specification ubl schema xsd CommonAggregateComponents-2}InvoiceLine", "")
-                    INICIO.notifi(100, dictionaryEnv.Item("cod_sunat"), mensaje, ToolTipIcon.Error, Color.White, Color.White, Color.Tomato)
-                    Sql = "UPDATE cja_documento Set(cod_hash,cod_sunat, msg_sunat) = ('ERROR','" & dictionaryEnv.Item("cod_sunat") & "','" & mensaje & "') WHERE id=" & SqlDR2("id")
-                    RunSQL(Sql)
-
-                End If
-                SqlDR3.Close()
-            End While
-            SqlDR.Close()
+                SqlDR.Close()
             SqlDR2.Close()
             cmd.Dispose()
             Connection.Close()
@@ -421,10 +428,7 @@ Module Module1
 
             INICIO.detener_timer()
             MessageBox.Show("ERROR..", ex.Message)
-            MessageBox.Show("ERROR..", ex.Message)
-            MessageBox.Show("ERROR..", ex.Message)
 
-            ESTO SOLOE S EL LA RRAMA
 
 
         End Try

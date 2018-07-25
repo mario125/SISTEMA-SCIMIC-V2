@@ -42,7 +42,7 @@ Public Class CPEConfig
 
         If (CPE.TIPO_PROCESO = 3) Then
             '===================configuracion de rutas===================
-            ruta = "D:\\CPE-SUNAT\\BETA\\DATA"
+            ruta = "D:\\CPE-SUNAT\\BETA\\DATA\\"
             rutaFirma = "D:\\CPE-SUNAT\\BETA\\FIRMA\\FIRMABETA.pfx"
             url = "https://e-beta.sunat.gob.pe:443/ol-ti-itcpfegem-beta/billService"
             '===================creamos xml(comprobante)====================
@@ -70,48 +70,23 @@ Public Class CPEConfig
             '====================enviamos documento a la sunat=========================
             dictionary = objENV.Envio(CPE.NRO_DOCUMENTO_EMPRESA, CPE.USUARIO_SOL_EMPRESA, CPE.PASS_SOL_EMPRESA, nomARCHIVO, ruta, url, objRespuesta.DigestValue)
             If dictionary.Item("cod_sunat") <> "0" Then
-                CPE.ESTADO_DE_DOC = " DOCUMENTO ERRONEO, SIN VALOR..."
+                CPE.ESTADO_DE_DOC = "DOCUMENTO ERRONEO, SIN VALOR..."
+                RptPDF.TraerReporteComprobante(CPE)
             Else
                 CPE.ESTADO_DE_DOC = " "
+                RptPDF.TraerReporteComprobante(CPE)
             End If
 
-            RptPDF.TraerReporteComprobante(CPE)
+
 
         End If
-        If (CPE.TIPO_PROCESO = 2) Then
-                '===================configuracion de rutas===================
-                ruta = "D:\\CPE\\HOMOLOGACION\\"
-                rutaFirma = "D:\\CPE\\FIRMA\\" & CPE.NRO_DOCUMENTO_EMPRESA & ".pfx"
-                url = "https://www.sunat.gob.pe/ol-ti-itcpgem-sqa/billService"
-                '===================creamos xml(comprobante)====================
-                If CPE.COD_TIPO_DOCUMENTO = "01" Or CPE.COD_TIPO_DOCUMENTO = "03" Then
-                    objXML.CPE(CPE, nomARCHIVO, ruta)
-                ElseIf CPE.COD_TIPO_DOCUMENTO = "07" Then
-                    objXML.CPE_NC(CPE, nomARCHIVO, ruta)
-                ElseIf CPE.COD_TIPO_DOCUMENTO = "08" Then
-                    objXML.CPE_ND(CPE, nomARCHIVO, ruta)
-                End If
-                '=================datos para la firma====================
-                objPregunta.ruta_Firma = rutaFirma
-                objPregunta.contra_Firma = CPE.CONTRA_FIRMA
-                objPregunta.ruta_xml = ruta & nomARCHIVO & ".XML"
-                objPregunta.flg_firma = 1
-                objRespuesta = objSignature.FirmaXMl(objPregunta)
-                '====================creamos pdf====================
-                'Dim RptPDF As New RT.FrmRepMaestro
-                Dim RptPDF As New RT.Metodos
-                CPE.HASH_CPE = objRespuesta.DigestValue
-                CPE.RUTA_CODIGO_BARRA = "D:\\CPE\\CODIGOBARRA\\" & nomARCHIVO & ".BMP"
-                CPE.RUTA_PDF = "D:\\CPE\\BETA\\" & nomARCHIVO & ".PDF"
-                RptPDF.TraerReporteComprobante(CPE)
-                '====================enviamos documento a la sunat=========================
-                dictionary = objENV.Envio(CPE.NRO_DOCUMENTO_EMPRESA, CPE.USUARIO_SOL_EMPRESA, CPE.PASS_SOL_EMPRESA, nomARCHIVO, ruta, url, objRespuesta.DigestValue)
-            End If
-            If (CPE.TIPO_PROCESO = 1) Then
+
+        If (CPE.TIPO_PROCESO = 1) Then
             '===================configuracion de rutas===================
-            ruta = "D:\\CAMAL\\CPE\\PRODUCCION\\"
-            rutaFirma = "D:\\CAMAL\\CPE\\FIRMA\\c1B1Vm1saWRJMXlocTlXMQ==.pfx"
+            ruta = "D:\\CPE-SUNAT\\PRODUCCION\\DATA\\"
+            rutaFirma = "D:\\CPE-SUNAT\\PRODUCCION\\FIRMA\\YXBnNWdiNmhDenlOUXBVTA==.pfx"
             url = "https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
+
             '===================creamos xml(comprobante)====================
             If CPE.COD_TIPO_DOCUMENTO = "01" Or CPE.COD_TIPO_DOCUMENTO = "03" Then
                 objXML.CPE(CPE, nomARCHIVO, ruta)
@@ -130,26 +105,27 @@ Public Class CPEConfig
             Dim RptPDF As New RT.FrmRepMaestro
             'Dim RptPDF As New RT.Metodos
             CPE.HASH_CPE = objRespuesta.DigestValue
-            CPE.RUTA_CODIGO_BARRA = "D:\\CAMAL\\CPE\\CODIGOBARRA\\" & nomARCHIVO & ".BMP"
-            CPE.RUTA_PDF = "D:\\CAMAL\\CPE\\PRODUCCION\\" & nomARCHIVO & ".pdf"
-            CPE.RUTA_PDF_2_NUVE = "D:\\CAMAL\\CPE\\NUVE\\" & nomBRE_AR_NUVE & ".pdf"
+            CPE.RUTA_CODIGO_BARRA = "D:\\CPE-SUNAT\\PRODUCCION\\CODIGOBARRA\\" & nomARCHIVO & ".BMP"
+            CPE.RUTA_PDF = "D:\\CPE-SUNAT\\PRODUCCION\\DATA\\" & nomARCHIVO & ".pdf"
+            CPE.RUTA_PDF_2_NUVE = "D:\\CPE-SUNAT\\PRODUCCION\\NUVE\\" & nomBRE_AR_NUVE & ".pdf"
 
             '====================enviamos documento a la sunat=========================
             dictionary = objENV.Envio(CPE.NRO_DOCUMENTO_EMPRESA, CPE.USUARIO_SOL_EMPRESA, CPE.PASS_SOL_EMPRESA, nomARCHIVO, ruta, url, objRespuesta.DigestValue)
             If dictionary.Item("cod_sunat") <> "0" Then
-                CPE.ESTADO_DE_DOC = " DOCUMENTO ERRONEO, SIN VALOR..."
+                CPE.ESTADO_DE_DOC = "DOCUMENTO ERRONEO, SIN VALOR..."
+                RptPDF.TraerReporteComprobante(CPE)
             Else
                 CPE.ESTADO_DE_DOC = " "
+                RptPDF.TraerReporteComprobante(CPE)
             End If
 
-            RptPDF.TraerReporteComprobante(CPE)
         End If
 
 
 
 
 
-            Return dictionary
+        Return dictionary
     End Function
 
     Public Function envio_libre(CPE As BE.CPE) As Dictionary(Of String, String)
